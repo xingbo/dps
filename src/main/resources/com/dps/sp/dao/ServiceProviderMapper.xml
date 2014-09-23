@@ -64,11 +64,11 @@
     </insert>
 
     <delete id="deleteServProvider" parameterType="ServiceProvider">
-        delete from SERVPROVIDER where ID = #{servTypeId}
+        delete from SERVPROVIDER where ID = #{spId}
     </delete>
 
     <update id="updateServProviderStatus" parameterType="int">
-        update SERVPROVIDER set STATUS = #{status} where ID = #{servTypeId}
+        update SERVPROVIDER set STATUS = #{nextStatus.id} where ID = #{spId}
     </update>
 
 

@@ -3,6 +3,7 @@ package com.dps.sp.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.dps.common.enums.StatusEnum;
 import com.dps.sp.domain.ServiceType;
 import com.dps.sp.vo.ServiceProviderDetailVo;
 import com.dps.sp.vo.ServiceProviderVo;
@@ -51,6 +52,7 @@ public interface ServiceProviderMapper {
     boolean saveSP2STRelation(@Param("spid")int spid, @Param("stid")int stid, @Param("status")int status,
                               @Param("createdate")Date createdate, @Param("updatedate")Date updatedate);
 
+    boolean updateServProviderStatus(@Param("spid")int spid, @Param("nextStatus")StatusEnum nextStatus);
 
     boolean addServProviderForServType(ServiceProvider serviceProvider, ServiceType serviceType);
 

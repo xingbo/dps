@@ -173,12 +173,12 @@ public class ServiceProviderBiz {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void superiorSP(Integer spId, StatusEnum nextStatus) throws Exception {
-        ServiceProvider originalServiceProvider = serviceProviderMapper.findSP(spID);
-        if (originalServiceProvider.getStatus() != StatusEnum.ACTIVE_SP.getId()) {
-            throw new DpsBizException(ErrorCodeEnum.SP_STATUS_NOT_RIGHT.getId(),
-                    "SP当前状态为" + StatusEnum.getEnumByID(originalServiceProvider.getStatus()) + ", 无法冻结");
-        }
-		serviceProviderMapper.updateSPStatusByID(spId, nextStatus, DateUtil.getCurrentDate());
+//        ServiceProvider originalServiceProvider = serviceProviderMapper.findSP(spId);
+//        if (originalServiceProvider.getStatus() != StatusEnum.ACTIVE_SP.getId()) {
+//            throw new DpsBizException(ErrorCodeEnum.SP_STATUS_NOT_RIGHT.getId(),
+//                    "SP当前状态为" + StatusEnum.getEnumByID(originalServiceProvider.getStatus()) + ", 无法冻结");
+//        }
+		serviceProviderMapper.updateServProviderStatus(spId, nextStatus);
 	}
 
 
