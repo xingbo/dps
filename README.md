@@ -2,7 +2,7 @@ dps
 ===
 
 ## Preparation
-# JDK, 1.6 or above
+* JDK, 1.6 or above
 * Maven
 * Database, MySql or H2Sql DB
 * Tomcat, 7 or above
