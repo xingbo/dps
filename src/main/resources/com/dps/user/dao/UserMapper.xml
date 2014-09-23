@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dps.user.dao.UserMapper">
+
+    <select id="getAllUserCount" resultType="int">
+        select count(ID) from USERINFO
+    </select>
+
+    <select id="getCUsers" resultMap="simpleUserMap">
+        select ID, NAME, TYPE, STATUS from USERINFO u where u.TYPE != 1
+    </select>
+
+    <select id="getPagedUsers" resultMap="listUserMap">
+        select u.ID, u.NAME, u.TYPE, u.STATUS, u.TRUENAME, u.PHONE, u.ADDRESS, u.CREATEDATE, u.UPDATEDATE
+        from USERINFO u
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="findUserById" resultMap="simpleUserMap">
+        select ID, NAME, TYPE, STATUS from USERINFO u where u.ID = #{id}
+    </select>
+
+
+    <resultMap id="simpleUserMap" type="UserVo">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="type" column="TYPE" javaType="com.dps.common.enums.UserTypeEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="status" column="STATUS" javaType="com.dps.common.enums.StatusEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+    </resultMap>
+
+    <resultMap id="listUserMap" type="UserListVo">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="type" column="TYPE" javaType="com.dps.common.enums.UserTypeEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="status" column="STATUS" javaType="com.dps.common.enums.StatusEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="trueName" column="TRUENAME"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createDate" column="CREATEDATE"/>
+        <result property="updateDate" column="UPDATEDATE"/>
+    </resultMap>
+</mapper>

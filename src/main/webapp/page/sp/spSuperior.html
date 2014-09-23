@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <form role="form" id="spform">
+
+        <div class="form-group">
+            <label for="spName">SP名称</label>
+            <input type="text" class="form-control" id="spName" name="spName" placeholder="SP名称"/>
+        </div>
+        <div class="form-group">
+            <label>SP类别</label>
+            <input type="text" class="form-control" id="spCategory" name="spCategory" placeholder="SP类别"/>
+        </div>
+        <div class="form-group">
+            <label for="spTypes">SP活动</label>
+            <input type="text" class="form-control" id="spTypes" name="spTypes" placeholder="SP活动"/>
+        </div>
+        <div class="form-group">
+            <label for="spOwner">SP所属人</label>
+            <input type="text" class="form-control" id="spOwner" name="spOwner" placeholder="SP所属人"/>
+        </div>
+        <div class="form-group">
+            <label for="spCity">城市</label>
+            <input type="text" class="form-control" id="spCity" name="spCity" placeholder="所在城市"/>
+        </div>
+        <div class="form-group">
+            <label for="spDistrict">区</label>
+            <input type="text" class="form-control" id="spDistrict" name="spDistrict" placeholder="区"/>
+        </div>
+        <div class="form-group">
+            <label for="spAddress">地址</label>
+            <input type="text" class="form-control" id="spAddress" name="spAddress" placeholder="地址"/>
+        </div>
+        <div class="form-group">
+            <label for="spPhone">电话</label>
+            <input type="text" class="form-control" id="spPhone" name="spPhone" placeholder="手机号"/>
+        </div>
+        <div class="form-group">
+            <label for="servicesArea">服务区域</label>
+            <input class="form-control" id="servicesArea" name="servicesArea" placeholder="服务区域"/>
+        </div>
+        <div class="form-group">
+            <label for="spAdvtImage">SP头像</label>
+            <input class="form-control" id="spAdvtImage" name="spAdvtImage" placeholder="SP头像"/>
+        </div>
+        <div class="form-group">
+            <label for="spCertImage">SP资质</label>
+            <input class="form-control"  id="spCertImage" name="spCertImage" placeholder="SP资质"/>
+        </div>
+        <div class="form-group">
+            <label for="spDescription">SP描述</label>
+            <input class="form-control"  id="spDescription" name="spDescription" placeholder="SP描述"/>
+        </div>
+        <div class="form-group">
+            <label for="spStatus">SP当前状态</label>
+            <span id="spStatus"></span>
+        </div>
+        <p>
+            <button id="backbtn" type="button" class="btn btn-link">返回</button>
+
+            <button type="button" class="btn btn-default">待审核</button>
+
+            <button type="button" class="btn btn-info">审核中</button>
+
+            <button type="button" class="btn btn-success">活跃</button>
+
+            <button type="button" class="btn btn-primary">重新审核</button>
+
+            <button type="button" class="btn btn-warning">不活跃</button>
+
+            <button type="button" class="btn btn-danger">冻结</button>
+        </p>
+    </form>
+    <script>
+        $(function () {
+            $("#backbtn").bind("click", function () {
+                $("#mainContainer").load("page/sp/splist.html");
+            });
+
+            $("#submitbtn").bind("click", function () {
+                $('#spName').val("");
+                $('input[name=spCategory]:checked').prop('checked', false);
+                $('#spType').prop("selected", false);
+                $('#spOwner').prop("selected", false);
+                $('#spCity').val("");
+                $('#spDistrict').val("");
+                $('#spAddress').val("");
+                $('#spPhone').val("");
+                $('#servicesArea').val("");
+                $('#spAdvtImage').val("");
+                $('#spCertImage').val("");
+                $('#spDescription').val("");
+
+                var urlStr = "data/sp/save";
+                if ($("#isModify").val() == "true") {
+                    urlStr = "data/sp/update"
+                }
+
+                // post record
+                $.ajax({
+                    type: "post",
+                    url: urlStr,
+                    data: $('#spform').serialize(),
+                    success: function (rd) {
+                        if (rd.success) {
+
+                            alert("Save successfully!");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</div>

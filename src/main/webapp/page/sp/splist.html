@@ -1,0 +1,205 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="navbar-collapse collapse">
+            <form role="form" id="spQueryForm">
+                <div class="form-group">
+                    <label for="spID">SPID</label>
+                    <input type="text" id="spID" name="spID" placeholder="spID">
+                    <label for="spName">SPName</label>
+                    <input type="text" id="spName" name="spName" placeholder="spName">
+                    <label for="spStatus">状态</label>
+                    <input type="text" id="spStatus" name="spStatus" placeholder="状态">
+                    <label for="spCategory">类型</label>
+                    <span id="sptypesList">
+                        <select name="spCategory" id="spCategory">
+                            <option value="0">所有</option>
+                            <option value="1">教练</option>
+                            <option value="2">场地</option>
+                            <option value="3">俱乐部</option>
+                        </select>
+                    </span>
+                    <label for="userID">用户ID</label>
+                    <input type="text" id="userID" name="userID" placeholder="用户ID">
+                </div>
+                <p>
+                    <button id="spQueryBtn" type="button" class="btn btn-primary btn-lg">查询</button>
+                </p>
+            </form>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="spSuperiorBtn" href="#">审批</a></li>
+                <li></li>
+                <li><a id="spAddBtn" href="#">新增</a></li>
+                <li><a id="spModBtn" href="#">修改</a></li>
+                <li><a id="spDelBtn" href="#">删除</a></li>
+            </ul>
+        </div>
+        <div class="table-responsive">
+            <table id="tisTab" class="table table-striped">
+                <thead>
+                <tr>
+                    <th><input id="btnCheckAll2" type="checkbox"/></th>
+                    <th>SPID</th>
+                    <th>服务名称</th>
+                    <th>服务类型</th>
+                    <th>城市</th>
+                    <th>地址</th>
+                    <th>服务范围</th>
+                    <th>电话</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                    <th>用户ID</th>
+                    <th>用户名称</th>
+                    <th>用户类别</th>
+                    <th>用户状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            // Query function
+            $("#spQueryBtn").bind("click", function () {
+                $.ajax({
+                    type: "get",
+                    url: "data/sp/get",
+                    data: { phone: $("#phone").val(), userID: $("#userID").val(), spID: $("#spID").val(), status: $("#status").val(), sptype: $("#sptype").val()},
+                    success: function (rd) {
+                        if (rd) {
+                            //var jsd = $.parseJSON(rd);
+                            $("#tisTab tbody tr").remove();
+                            var tb = $("#tisTab tbody");
+                            var d;
+                            var rs = rd.data;
+                            for (var i = 0; i < rs.length; i++) {
+                                d = rs[i];
+                                tb.append("<tr>" +
+                                        "<td><input type='checkbox' name='chkItem' value='" + d.id + "'/></td>" +
+                                        "<td>" + d.id + "</td>" +
+                                        "<td>" + d.userId + "</td>" +
+                                        "<td>" + d.name + "</td>" +
+                                        "<td>" + d.serviceTypes + "</td>" +
+                                        "<td>" + d.spType + "</td>" +
+                                        "<td>" + d.phone + "</td>" +
+                                        "<td>" + d.city + "</td>" +
+                                        "<td>" + d.address + "</td>" +
+                                        "<td>" + d.status + "</td>" +
+                                        "<td>" + d.createDate + "</td>" +
+                                        "<td>" + d.updateDate + "</td>" +
+                                        "</tr>");
+                            }
+                        }
+                        else {
+                            alert("done");
+                        }
+
+                    }
+                });
+
+            });
+
+            // Add new Service Provider
+            $("#spAddBtn").bind("click", function () {
+                //console.log("add sp");
+                $("#mainContainer").load("page/sp/spInfo.html", function () {
+
+                    loadData("servtype/paged/list", function(data){
+                        //append result to service type dropdown
+                        var rs = data.results;
+                        if (rs) {
+                            for(var i = 0; i < rs.length; i++) {
+                                $("#spTypes").append("<option value=\"" + rs[i].servTypeId + "\">" + rs[i].servTypeName + "</option>");
+                            }
+                        }
+
+                    }, {start:0, limit:15});
+
+                    loadData("cuser/list", function(data){
+                        //append result to user dropdown
+                        //get the user lists, only court/club and coach user are allowed
+                        var rs = data.results;
+                        if (rs) {
+                            for(var i = 0; i < rs.length; i++) {
+                                $("#spOwner").append("<option value=\"" + rs[i].id + "\">" + rs[i].name + "</option>");
+                            }
+                        }
+                    });
+
+                });
+            });
+
+            // Modify Service Provider
+            $("#spModBtn").bind("click", function () {
+                console.log("modify sp");
+                if ($('input[name=chkItem]:checked').length == 1) {
+                    var selectedId = $('input[name=chkItem]:checked').val();
+                    loadData("sp/get", function (rd) {
+                        if (rd.data) {
+                            var sp = rd.data;
+                            $("#mainContainer").load("page/sp/spInfo.html", function () {
+                                $("#spID").val(sp.id);
+                                $("#userId").val(sp.userId);
+                                $("#name").val(sp.name);
+                                $("#serviceTypes").val(sp.serviceTypes);
+                                $("#spType").val(sp.spType);
+                                $("#phone").val(sp.phone);
+                                $("#city").val(sp.city);
+                                $("#servicesArea").val(sp.servicesArea);
+                                $("#address").val(sp.address);
+                                // mark the modify flag
+                                $("#isModify").val("true");
+                            });
+                        }
+                    }, {spId: selectedId});
+                }
+            });
+
+            // Delete Service Provider
+            $("#spDelBtn").bind("click", function () {
+                console.log("delete sp");
+
+            });
+
+            // Sp superior actions
+            $("#spSuperiorBtn").bind("click", function (event) {
+                console.log("superior sp" + spId);
+                $("#mainContainer").load("page/sp/spSuperior.html", function () {
+
+                });
+            });
+
+            // Initial method, executed immediately to load the paging result
+            loadData("sp/paged/list", function (data) {
+                $("#tisTab tbody tr").remove();
+                var tb = $("#tisTab tbody");
+                var rs = data.results;
+                for (var i = 0; i < rs.length; i++) {
+                    var d = rs[i];
+                    tb.append("<tr>" +
+                            "<td><input type='checkbox' name='chkItem' value='" + d.spId + "'/></td>" +
+                            "<td>" + d.spId + "</td>" +
+                            "<td>" + d.spName + "</td>" +
+                            "<td>" + d.spCategory.name + "</td>" +
+                            "<td>" + d.spCity + "</td>" +
+                            "<td>" + d.spAddress + "</td>" +
+                            "<td>" + d.spServArea + "</td>" +
+                            "<td>" + d.spPhone + "</td>" +
+                            "<td>" + d.spStatus.name + "</td>" +
+                            "<td>" + d.createDate + "</td>" +
+                            "<td>" + d.updateDate + "</td>" +
+                            "<td>" + d.user.id + "</td>" +
+                            "<td>" + d.user.name + "</td>" +
+                            "<td>" + d.user.type.name + "</td>" +
+                            "<td>" + d.user.status.name + "</td>" +
+                            "</tr>");
+                }
+            }, { start: 0, limit: 15 });
+        });
+    </script>
+</div>

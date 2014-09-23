@@ -1,0 +1,108 @@
+<div class="container-fluid">
+    <form role="form" id="spform">
+
+        <div class="form-group">
+            <label for="spName">SP名称</label>
+            <input type="text" class="form-control" id="spName" name="spName" placeholder="SP名称"/>
+        </div>
+        <div class="form-group">
+            <label>SP类别</label>
+            <label class="radio-inline">
+                <input type="radio" name="spCategory" value="1"/>场地
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="spCategory" value="2"/>俱乐部
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="spCategory" value="3"/>教练
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="spTypes">SP Types</label>
+            <select class="form-control" id="spTypes" name="spTypes">
+                <option></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="spOwner">SP所属人</label>
+            <select class="form-control" id="spOwner" name="spOwner">
+                <option></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="spCity">城市</label>
+            <input type="text" class="form-control" id="spCity" name="spCity" placeholder="所在城市"/>
+        </div>
+        <div class="form-group">
+            <label for="spDistrict">区</label>
+            <input type="text" class="form-control" id="spDistrict" name="spDistrict" placeholder="区"/>
+        </div>
+        <div class="form-group">
+            <label for="spAddress">地址</label>
+            <input type="text" class="form-control" id="spAddress" name="spAddress" placeholder="地址"/>
+        </div>
+        <div class="form-group">
+            <label for="spPhone">电话</label>
+            <input type="text" class="form-control" id="spPhone" name="spPhone" placeholder="手机号"/>
+        </div>
+        <div class="form-group">
+            <label for="servicesArea">服务区域</label>
+            <input class="form-control" id="servicesArea" name="servicesArea" placeholder="服务区域"/>
+        </div>
+        <div class="form-group">
+            <label for="spAdvtImage">SP头像</label>
+            <input class="form-control" id="spAdvtImage" name="spAdvtImage" placeholder="SP头像"/>
+        </div>
+        <div class="form-group">
+            <label for="spCertImage">SP资质</label>
+            <input class="form-control"  id="spCertImage" name="spCertImage" placeholder="SP资质"/>
+        </div>
+        <div class="form-group">
+            <label for="spDescription">SP描述</label>
+            <input class="form-control"  id="spDescription" name="spDescription" placeholder="SP描述"/>
+        </div>
+        <p>
+            <input type="hidden" id="isModify" name="isModify"/>
+            <button id="backbtn" type="button" class="btn btn-primary btn-lg">返回</button>
+            <button id="submitbtn" type="button" class="btn btn-primary btn-lg">保存</button>
+        </p>
+    </form>
+    <script>
+        $(function () {
+            $("#backbtn").bind("click", function () {
+                $("#mainContainer").load("page/sp/splist.html");
+            });
+
+            $("#submitbtn").bind("click", function () {
+                var urlStr = "data/sp/save";
+                if ($("#isModify").val() == "true") {
+                    urlStr = "data/sp/update"
+                }
+
+                // post record
+                $.ajax({
+                    type: "post",
+                    url: urlStr,
+                    data: $('#spform').serialize(),
+                    success: function (rd) {
+                        if (rd.success) {
+                            $('#spName').val("");
+                            $('input[name=spCategory]:checked').prop('checked', false);
+                            $('option:selected').prop("selected", false);
+                            $('#spCity').val("");
+                            $('#spDistrict').val("");
+                            $('#spAddress').val("");
+                            $('#spPhone').val("");
+                            $('#servicesArea').val("");
+                            $('#spAdvtImage').val("");
+                            $('#spCertImage').val("");
+                            $('#spDescription').val("");
+
+                            alert("Save successfully!");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</div>

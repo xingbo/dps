@@ -1,0 +1,121 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="navbar-collapse collapse">
+            <form role="form" id="stQueryForm">
+                <div class="form-group">
+                    <label for="stId">运动编号</label>
+                    <input type="text" id="stId" name="stId" placeholder="运动编号">
+                    <label for="stName">运动名称</label>
+                    <input type="text" id="stName" name="stName" placeholder="运动名称">
+                </div>
+                <p>
+                    <button id="stQueryBtn" type="button" class="btn btn-primary btn-lg">查询</button>
+                </p>
+            </form>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="stAddBtn" href="#">新增</a></li>
+                <li><a id="stModBtn" href="#">修改</a></li>
+                <li><a id="stDelBtn" href="#">删除</a></li>
+            </ul>
+        </div>
+        <div class="table-responsive">
+            <table id="tisTab" class="table table-striped">
+                <thead>
+                <tr>
+                    <th><input id="btnCheckAll2" type="checkbox"/></th>
+                    <th>运动编号</th>
+                    <th>运动名称</th>
+                    <th>运动介绍</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            // Query function
+            $("#stQueryBtn").bind("click", function () {
+                loadData("servtype/get", function (rd) {
+                    $("#tisTab tbody tr").remove();
+                    if (rd && rd.results) {
+                        var tb = $("#tisTab tbody");
+                        var rs = rd.results;
+                        for (var i = 0; i < rs.length; i++) {
+                            var item = rs[i];
+                            tb.append("<tr>" +
+                                    "<td><input type='checkbox' name='chkItem' value='" + item.servTypeId + "'/></td>" +
+                                    "<td>" + item.servTypeId + "</td>" +
+                                    "<td>" + item.servTypeName + "</td>" +
+                                    "<td>" + item.servTypeDesc + "</td>" +
+                                    "</tr>");
+                        }
+                    }
+                }, {
+                    id: $("#stId").val(), name: $("#stName").val()
+                });
+            });
+
+            // Add ServiceType
+            $("#stAddBtn").bind("click", function () {
+                $("#mainContainer").load("page/sp/stInfo.html");
+            });
+
+            // Modify ServiceType
+            $("#stModBtn").bind("click", function () {
+                if ($('input[name=chkItem]:checked').length == 1) {
+                    var selectedId = $('input[name=chkItem]:checked').val();
+                    loadData("servtype/get", function (rd) {
+                        if (rd && rd.results && rd.results.length == 1) {
+                            var item = rd.results[0];
+                            $("#mainContainer").load("page/sp/stInfo.html", function () {
+                                $("#servTypeId").val(item.servTypeId);
+                                $("#servTypeName").val(item.servTypeName);
+                                $("#servTypeDesc").val(item.servTypeDesc);
+                                // mark the modify flag
+                                $("#isModify").val("true");
+                            });
+                        }
+                    }, {
+                        id: selectedId
+                    });
+                }
+            });
+
+            // Delete ServiceType
+            $("#stDelBtn").bind("click", function () {
+                if ($('input[name=chkItem]:checked').length == 1) {
+                    var tobeDelId = $('input[name=chkItem]:checked').val();
+                    loadData("servtype/del", function (data) {
+                        if (data.success = "true") {
+                            alert("Success.");
+                            $("#mainContainer").load("page/sp/stlist.html");
+                        } else {
+                            alert("Not able to delete!");
+                        }
+                    }, {id: tobeDelId});
+                }
+            });
+
+            // Initial method, executed immediately to load the paging result
+            loadData("servtype/paged/list", function (data) {
+                $("#tisTab tbody tr").remove();
+                var tb = $("#tisTab tbody");
+                var rs = data.results;
+                for (var i = 0; i < rs.length; i++) {
+                    var item = rs[i];
+                    tb.append("<tr>" +
+                            "<td><input type='checkbox' name='chkItem' value='" + item.servTypeId + "'/></td>" +
+                            "<td>" + item.servTypeId + "</td>" +
+                            "<td>" + item.servTypeName + "</td>" +
+                            "<td>" + item.servTypeDesc + "</td>" +
+                            "</tr>");
+                }
+            }, { start: 0, limit: 15 });
+        });
+    </script>
+</div>

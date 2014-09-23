@@ -1,0 +1,55 @@
+<div class="container-fluid">
+    <div class="row">
+       <div class="table-responsive">
+            <table id="psTab" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>类型</th>
+                  <th>价格</th>
+                  <th>地址</th>
+                  <th>描述</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+       </div>
+	</div>
+    <script>
+    		var productTypeName = function(type){
+    			var name = "";
+    			switch(type){
+    				case 1:
+    					name = "";
+    					break;
+    				case 2:
+    					name = "";
+    					break;
+    			}
+    			
+    			return name;
+    		}
+    		
+    		loadData("dPService/paged/list", function(data) {
+	     		 $("#psTab tbody tr").remove();
+	     		 var tb = $("#psTab tbody");
+	         	 var d;
+	         	 var rs = data.results;
+	         	 for(var i=0; i<rs.length; i++){
+	         				d = rs[i];
+	         				tb.append( "<tr>" +
+							"<td>" + d.name + "</td>" +
+							"<td>" + productTypeName(d.type) + "</td>" +
+							"<td>" + d.price + "</td>" +
+							"<td>" + d.address + "</td>" +
+							"<td>" + d.description + "</td>" +
+							"</tr>" );
+	         	  }
+	         	  
+		         $("#psTab tbody tr").bind("click",function(){
+		         	
+				 })；
+	         },{ start : 0, limit : 10 });
+    </script>
+</div>

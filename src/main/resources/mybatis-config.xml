@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="defaultExecutorType" value="REUSE"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="com.dps.user.domain.User" alias="User"/>
+        <typeAlias type="com.dps.sp.domain.ServiceType" alias="ServiceType"/>
+        <typeAlias type="com.dps.sp.domain.ServiceProvider" alias="ServiceProvider" />
+
+        <typeAlias type="com.dps.sp.vo.ServiceProviderVo" alias="ServiceProviderVo" />
+        <typeAlias type="com.dps.sp.vo.ServiceProviderDetailVo" alias="ServiceProviderDetailVo" />
+        <typeAlias type="com.dps.user.vo.UserVo" alias="UserVo" />
+        <typeAlias type="com.dps.user.vo.UserListVo" alias="UserListVo" />
+    </typeAliases>
+
+    <!--<typeHandlers>-->
+        <!--<typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.dps.common.enums.UserTypeEnum"/>-->
+        <!--<typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.dps.common.enums.ServiceProviderCategoryEnum"/>-->
+    <!--</typeHandlers>-->
+
+    <mappers>
+        <mapper resource="com/dps/sp/dao/ServiceProviderMapper.xml"/>
+        <mapper resource="com/dps/sp/dao/ServiceTypeMapper.xml"/>
+    </mappers>
+
+</configuration>

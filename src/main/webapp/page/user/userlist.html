@@ -1,0 +1,85 @@
+<div class="container-fluid">
+      <div class="row">
+        <div class="navbar-collapse collapse">
+	          <ul class="nav navbar-nav navbar-right">
+	            <li><a id="addUserBtn" href="#">新增</a></li>
+	            <li><a href="#">修改</a></li>
+	            <li><a id="delUserBtn" href="#">删除</a></li>
+	          </ul>
+          </div>
+          <div class="table-responsive">
+            <table id="tisTab" class="table table-striped">
+              <thead>
+                <tr>
+                  <th><input id="btnCheckAll2" type="checkbox"/></th>
+                  <th>姓名</th>
+                  <th>帐号</th>
+                  <th>类型</th>
+                  <th>电话</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+      </div>
+      
+      <script>
+    	$(function () {
+    		$("#btnCheckAll2").bind("click", function () {
+    			if ($(this).attr("checked")) {
+                	$("[name = chkItem]:checkbox").attr("checked", true);
+                } else {
+                	$("[name = chkItem]:checkbox").attr("checked", false);
+                }
+            });
+            
+            $("#btnSubmit").bind("click", function () {
+                var result = new Array();
+                $("[name = chkItem]:checkbox").each(function () {
+                    if ($(this).is(":checked")) {
+                        result.push($(this).attr("value"));
+                    }
+                });
+
+                alert(result.join(","));
+            });
+            
+            $("#addUserBtn").bind("click", function() {
+				$("#mainContainer").load("page/user/userinfo.html");
+			});
+			
+			$("#delUserBtn").bind("click", function() {
+				var result = new Array();
+                $("[name = chkItem]:checkbox").each(function () {
+                    if ($(this).is(":checked")) {
+                        result.push($(this).attr("value"));
+                    }
+                });
+                
+                alert(result.join(","));
+			});
+	        
+	        loadData("user/paged/list", function(data) {
+	     		 $("#tisTab tbody tr").remove();
+	     		 var tb = $("#tisTab tbody");
+	         	 var d;
+	         	 var rs = data.results;
+	         	 for(var i=0; i<rs.length; i++){
+	         				d = rs[i];
+	         				tb.append( "<tr>" +
+	         				"<td><input type='checkbox' name='chkItem' value='" + d.id + "'/></td>" + 
+							"<td>" + d.name + "</td>" +
+							"<td>" + d.login + "</td>" +
+							"<td>" + (d.type==1 ? "消费者" : "服务提供商" ) + "</td>" +
+							"<td>" + d.phone + "</td>" +
+							"<td>" + (d.status == 1 ? "可用" : "注销") + "</td>" +
+							"<td>" + d.updateDate + "</td>" +
+							"</tr>" );
+	         	  }
+	         },{ start : 0, limit : 10 });
+    	});
+    	</script>
+</div>

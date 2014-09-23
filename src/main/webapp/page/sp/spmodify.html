@@ -1,0 +1,78 @@
+<div class="container-fluid">
+    <form role="form" id="spform">
+
+        <div class="form-group">
+            <label for="spID">spID</label>
+            <input type="text" class="form-control" id="spID" name="spID" placeholder="spID" value=""/>
+        </div>
+
+        <div class="form-group">
+            <label for="userId">用户ID</label>
+            <input type="text" class="form-control" id="userId" name="userId" placeholder="用户ID"/>
+        </div>
+        <div class="form-group">
+            <label for="name">SP名称</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="SP名称"/>
+        </div>
+        <div class="form-group">
+            <label for="serviceTypes">服务类型</label>
+            <input type="text" class="form-control" id="serviceTypes" name="serviceTypes" placeholder="服务类型"/>
+        </div>
+        <div class="form-group">
+            <label for="spType">SP类型</label>
+            <input type="text" class="form-control" id="spType" name="spType" placeholder="sp类型"/>
+        </div>
+        <div class="form-group">
+            <label for="phone">电话</label>
+            <input type="text" class="form-control" id="phone" name="phone" placeholder="手机号"/>
+        </div>
+        <div class="form-group">
+            <label for="city">所在城市</label>
+            <input class="form-control"  id="city" name="city" placeholder="所在城市"/>
+        </div>
+        <div class="form-group">
+            <label for="servicesArea">服务区域</label>
+            <input class="form-control"  id="servicesArea" name="servicesArea" placeholder="服务区域"/>
+        </div>
+        <div class="form-group">
+            <label for="address">地址</label>
+            <textarea class="form-control"  id="address" name="address" placeholder="地址"/>
+        </div>
+        <div class="form-group">
+            <label for="level">执教水平</label>
+            <textarea class="form-control"  id="level" name="level" placeholder="执教水平"/>
+        </div>
+        <div class="form-group">
+            <label for="workCompany">工作单位</label>
+            <input class="form-control"  id="workCompany" name="workCompany" placeholder="工作单位"/>
+        </div>
+        <div class="form-group">
+            <label for="description">自我描述</label>
+            <textarea class="form-control"  id="description" name="description" placeholder="自我描述"/>
+        </div>
+        <p>
+            <button id="backbtn" type="button" class="btn btn-primary btn-lg">返回</button>
+            <button id="submitbtn" type="button" class="btn btn-primary btn-lg">保存</button>
+        </p>
+    </form>
+    <script>
+        $(function(){
+            $("#backbtn").bind("click", function() {
+                $("#mainContainer").load("page/sp/splist.html");
+            });
+
+            $("#submitbtn").bind("click", function() {
+                $.ajax({
+                    type: "post",
+                    url: "data/sp/save",
+                    data : $('#spform').serialize(),
+                    success: function (rd) {
+                        if (rd){
+                            alert("ok");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</div>

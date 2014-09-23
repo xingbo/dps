@@ -1,0 +1,50 @@
+<div class="container-fluid">
+     <form role="form" id="stForm">
+
+         <input type="hidden" class="form-control" id="servTypeId" name="servTypeId"/>
+
+         <div class="form-group">
+		    <label for="servTypeName">运动名称</label>
+		    <input type="text" class="form-control" id="servTypeName" name="servTypeName" placeholder="运动名称"/>
+		  </div>
+		  <div class="form-group">
+		    <label for="servTypeDesc">运动描述</label>
+		    <input class="form-control"  id="servTypeDesc" name="servTypeDesc" placeholder="运动描述"/>
+		  </div>
+		  <p>
+              <input type="hidden" id="isModify" name="isModify"/>
+			  <button id="backbtn" type="button" class="btn btn-primary btn-lg">返回</button>
+			  <button id="submitbtn" type="button" class="btn btn-primary btn-lg">保存</button>
+		  </p>
+		</form>
+
+		<script>
+	    	$(function(){
+				$("#backbtn").bind("click", function() {
+					$("#mainContainer").load("page/sp/stlist.html");
+				});
+				
+				$("#submitbtn").bind("click", function() {
+                    var urlStr = "data/servtype/save";
+                    if ($("#isModify").val()=="true") {
+                        urlStr = "data/servtype/update"
+                    }
+
+                    // post record
+                    $.ajax({
+                        type: "post",
+                        url: urlStr,
+                        data : $('#stForm').serialize(),
+                        success: function (rd) {
+                            if (rd.success){
+                                alert("Save Successfully.");
+                                $("#mainContainer").load("page/sp/stlist.html");
+                            } else {
+                                alert("Not Saved!");
+                            }
+                        }
+                    });
+				});
+			});
+		</script>
+</div>

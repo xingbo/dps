@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dps.sp.dao.ServiceTypeMapper">
+
+    <select id="getLatestId" resultType="int">
+        SELECT SCOPE_IDENTITY()
+    </select>
+
+    <select id="getAllServTypeCount" resultType="int">
+        select count(ID) from SERVTYPE
+    </select>
+
+    <select id="getAllServType" resultMap="servTypeMap">
+        select * from SERVTYPE
+    </select>
+
+    <select id="getPagedServType" resultMap="servTypeMap">
+        select * from SERVTYPE limit #{offset}, #{limit}
+    </select>
+
+    <select id="findServTypeById" resultMap="servTypeMap">
+        select * from SERVTYPE where ID = #{id}
+    </select>
+
+    <select id="findServTypeByName" resultMap="servTypeMap">
+        select * from SERVTYPE where SERVTYPENAME like #{servTypeName}
+    </select>
+
+    <insert id="saveServType" useGeneratedKeys="true" keyProperty="ID">
+        insert into SERVTYPE (SERVTYPENAME, SERVTYPEDESC) values (#{servTypeName}, #{servTypeDesc})
+    </insert>
+
+    <update id="updateServType" parameterType="ServiceType">
+        update SERVTYPE set SERVTYPENAME = #{servTypeName}, SERVTYPEDESC = #{servTypeDesc} where ID = #{servTypeId}
+    </update>
+
+    <delete id="deleteServType" parameterType="ServiceType">
+        delete from SERVTYPE where ID = #{id}
+    </delete>
+
+
+    <resultMap id="servTypeMap" type="ServiceType">
+        <id property="servTypeId" column="ID"/>
+        <result property="servTypeName" column="SERVTYPENAME"/>
+        <result property="servTypeDesc" column="SERVTYPEDESC"/>
+    </resultMap>
+</mapper>

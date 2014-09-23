@@ -1,0 +1,53 @@
+<div class="container-fluid">
+     <form role="form" id="userform">
+		  <div class="form-group">
+		    <label for="username">名称</label>
+		    <input type="text" class="form-control" id="username" name="name" placeholder="姓名">
+		  </div>
+		  <div class="form-group" id="usertypesdiv">
+		  	<label for="usertypes">类型</label>
+		  	<div id="usertypes">
+			    <label for="usertype-cs" class="checkbox-inline">消费者</label>
+				<input type="radio" name="type" id="usertype-cs" value="1"> 
+				<label for="usertype-ps" class="checkbox-inline">服务提供商</label>
+				<input type="radio" name="type" id="usertype-ps" value="2"> 
+		  	</div>
+		  </div>
+		  <div class="form-group">
+		    <label for="userlogin">帐号</label>
+		    <input type="text" class="form-control" id="userlogin" name="login" placeholder="登录帐号">
+		  </div>
+		  <div class="form-group">
+		    <label for="userphone">电话</label>
+		    <input type="text" class="form-control" id="userphone" name="phone" placeholder="手机号">
+		  </div>
+		  <div class="form-group">
+		    <label for="userdesc">描述</label>
+		    <textarea class="form-control" rows="3" id="userdesc" name="description" placeholder="描述"></textarea>
+		  </div>
+		  <p>
+			  <button id="backbtn" type="button" class="btn btn-primary btn-lg">返回</button>
+			  <button id="submitbtn" type="button" class="btn btn-primary btn-lg">提交</button>
+		  </p>
+		</form>
+		<script>
+	    	$(function(){
+				$("#backbtn").bind("click", function() {
+					$("#mainContainer").load("page/user/userlist.html"); 
+				});
+				
+				$("#submitbtn").bind("click", function() {
+	        		$.ajax({
+			            type: "post",
+			            url: "data/user/save", 
+			            data : $('#userform').serialize(),
+			            success: function (rd) {
+			                if (rd){
+			                	alert("ok");
+			                }
+			            }
+		        	});
+				});
+			});
+		</script>
+</div>

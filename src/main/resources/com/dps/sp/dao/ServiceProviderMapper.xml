@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dps.sp.dao.ServiceProviderMapper">
+
+    <select id="getLatestId" resultType="int">
+        SELECT SCOPE_IDENTITY()
+    </select>
+
+    <select id="getTotalSPNum" resultType="int">
+        select count(ID) from SERVPROVIDER
+    </select>
+
+    <select id="getPagedSP" resultMap="servProviderList">
+        select sp.ID as SPID, sp.NAME as SPNAME, sp.CATEGORY, sp.CITY, sp.DISTRICT, sp.ADDRESS, sp.PHONE, sp.SERVICEAREA,
+                sp.STATUS as SPSTATUS, sp.CREATEDATE, sp.UPDATEDATE, u.ID as UID, u.NAME as UNAME, u.TYPE, u.STATUS as USTATUS
+        from SERVPROVIDER sp
+        left join USER_TO_SERVPROVIDER user_to_sp on sp.ID = user_to_sp.SPID
+        left join USERINFO u on u.ID = user_to_sp.USERID
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="findSPById" resultMap="servProviderDetail">
+        select sp.ID as SPID, sp.NAME as SPNAME, sp.CATEGORY, sp.CITY, sp.DISTRICT, sp.ADDRESS, sp.PHONE, sp.SERVICEAREA,
+                sp.ADVERTISEMENTIMAGE as SPADVTIMAGE, sp.CERTIFICATIONIMAGE as SPCERTIMAGE, sp.description as SPDESCRIPTION,
+                sp.STATUS as SPSTATUS, sp.CREATEDATE, sp.UPDATEDATE, u.ID as UID, u.NAME as UNAME, u.TYPE, u.STATUS as USTATUS,
+                sp_to_st.ID as SP_ST_ID, st.ID as STID, st.SERVTYPENAME as STNAME, st.SERVTYPEDESC as STDESC
+        from SERVPROVIDER sp
+        left join USER_TO_SERVPROVIDER user_to_sp on sp.ID = user_to_sp.SPID
+        left join USERINFO u on u.ID = user_to_sp.USERID
+        left join SERVPROVIDER_TO_SERVTYPE sp_to_st on sp.ID = sp_to_st.SPID
+        left join SERVTYPE st on st.ID = sp_to_st.STID
+        where sp.ID = #{id}
+    </select>
+
+    <insert id="saveServProvider" useGeneratedKeys="true" keyProperty="ID" parameterType="ServiceProvider">
+        insert into SERVPROVIDER
+            (NAME, CATEGORY, CITY, DISTRICT, ADDRESS, PHONE, SERVICEAREA, ADVERTISEMENTIMAGE, CERTIFICATIONIMAGE,
+            DESCRIPTION, STATUS, CREATEDATE, UPDATEDATE)
+        values
+            (#{spName}, #{spCategory.id}, #{spCity}, #{spDistrict}, #{spAddress}, #{spPhone}, #{spServArea}, #{spAdvtImage},
+            #{spCertImage}, #{spDescription}, #{status.id}, #{createDate}, #{updateDate})
+    </insert>
+
+    <insert id="saveSP2UserRelation">
+        insert into USER_TO_SERVPROVIDER
+            (USERID, SPID, ISOWNER, STATUS, CREATEDATE, UPDATEDATE)
+        values
+            (#{userid}, #{spid}, #{isowner}, #{status}, #{createdate}, #{updatedate})
+        <selectKey keyProperty="ID" resultType="int" order="AFTER">
+            select LAST_INSERT_ID() as ID
+        </selectKey>
+    </insert>
+
+    <insert id="saveSP2STRelation" useGeneratedKeys="true" keyProperty="ID">
+        insert into SERVPROVIDER_TO_SERVTYPE
+            (SPID, STID, STATUS, CREATEDATE, UPDATEDATE)
+        values
+            (#{spid}, #{stid}, #{status}, #{createdate}, #{updatedate})
+        <selectKey keyProperty="ID" resultType="int" order="AFTER">
+            select LAST_INSERT_ID() as ID
+        </selectKey>
+    </insert>
+
+    <delete id="deleteServProvider" parameterType="ServiceProvider">
+        delete from SERVPROVIDER where ID = #{servTypeId}
+    </delete>
+
+    <update id="updateServProviderStatus" parameterType="int">
+        update SERVPROVIDER set STATUS = #{status} where ID = #{servTypeId}
+    </update>
+
+
+    <resultMap id="servProviderList" type="ServiceProviderVo">
+        <id property="spId" column="SPID"/>
+        <result property="spName" column="SPNAME"/>
+        <result property="spCategory" column="CATEGORY" javaType="com.dps.common.enums.ServiceProviderCategoryEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="spCity" column="CITY"/>
+        <result property="spDistrict" column="DISTRICT"/>
+        <result property="spAddress" column="ADDRESS"/>
+        <result property="spPhone" column="PHONE"/>
+        <result property="spServArea" column="SERVICEAREA"/>
+        <result property="spStatus" column="SPSTATUS" javaType="com.dps.common.enums.StatusEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="createDate" column="CREATEDATE"/>
+        <result property="updateDate" column="UPDATEDATE"/>
+        <association property="user" javaType="UserVo">
+            <result property="id" column="UID"/>
+            <result property="name" column="UNAME"/>
+            <result property="type" column="TYPE" javaType="com.dps.common.enums.UserTypeEnum"
+                    typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+            <result property="status" column="USTATUS" javaType="com.dps.common.enums.StatusEnum"
+                    typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="servProviderDetail" type="ServiceProviderDetailVo">
+        <id property="spId" column="SPID"/>
+        <result property="spName" column="SPNAME"/>
+        <result property="spCategory" column="CATEGORY" javaType="com.dps.common.enums.ServiceProviderCategoryEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="spCity" column="CITY"/>
+        <result property="spDistrict" column="DISTRICT"/>
+        <result property="spAddress" column="ADDRESS"/>
+        <result property="spPhone" column="PHONE"/>
+        <result property="spServArea" column="SERVICEAREA"/>
+        <result property="spStatus" column="SPSTATUS" javaType="com.dps.common.enums.StatusEnum"
+                typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        <result property="spAdvtImage" column="SPADVTIMAGE"/>
+        <result property="spCertImage" column="SPCERTIMAGE"/>
+        <result property="spDescription" column="SPDESCRIPTION"/>
+        <result property="createDate" column="CREATEDATE"/>
+        <result property="updateDate" column="UPDATEDATE"/>
+        <association property="user" javaType="UserVo">
+            <result property="id" column="UID"/>
+            <result property="name" column="UNAME"/>
+            <result property="type" column="TYPE" javaType="com.dps.common.enums.UserTypeEnum"
+                    typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+            <result property="status" column="USTATUS" javaType="com.dps.common.enums.StatusEnum"
+                    typeHandler="com.dps.common.enums.typehandler.GenericEnumIDHandler"/>
+        </association>
+        <collection property="availableServiceTypes" column="SP_ST_ID" javaType="ArrayList" ofType="ServiceType">
+            <id property="servTypeId" column="STID"/>
+            <result property="servTypeName" column="STNAME"/>
+            <result property="servTypeDesc" column="STDESC"/>
+        </collection>
+    </resultMap>
+</mapper>
