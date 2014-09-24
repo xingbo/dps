@@ -40,7 +40,7 @@
             DESCRIPTION, STATUS, CREATEDATE, UPDATEDATE)
         values
             (#{spName}, #{spCategory.id}, #{spCity}, #{spDistrict}, #{spAddress}, #{spPhone}, #{spServArea}, #{spAdvtImage},
-            #{spCertImage}, #{spDescription}, #{status.id}, #{createDate}, #{updateDate})
+            #{spCertImage}, #{spDescription}, #{spStatus.id}, #{createDate}, #{updateDate})
     </insert>
 
     <insert id="saveSP2UserRelation">

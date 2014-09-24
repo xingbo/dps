@@ -143,8 +143,8 @@
                         if (rd.data) {
                             var sp = rd.data;
                             $("#mainContainer").load("page/sp/spInfo.html", function () {
-                                $("#spID").val(sp.id);
-                                $("#userId").val(sp.userId);
+                                $("#spID").val(sp.spId);
+                                $("#spName").val(sp.spName);
                                 $("#name").val(sp.name);
                                 $("#serviceTypes").val(sp.serviceTypes);
                                 $("#spType").val(sp.spType);
@@ -168,10 +168,18 @@
 
             // Sp superior actions
             $("#spSuperiorBtn").bind("click", function (event) {
-                console.log("superior sp" + spId);
-                $("#mainContainer").load("page/sp/spSuperior.html", function () {
+                console.log("superior sp");
+                if ($('input[name=chkItem]:checked').length == 1) {
+                    var selectedId = $('input[name=chkItem]:checked').val();
+                    loadData("sp/get", function (rd) {
+                        if (rd.data) {
+                            var d = rd.data;
+                            $("#mainContainer").load("page/sp/spSuperior.html", function () {
 
-                });
+                            });
+                        }
+                    }, {spId: selectedId});
+                }
             });
 
             // Initial method, executed immediately to load the paging result
