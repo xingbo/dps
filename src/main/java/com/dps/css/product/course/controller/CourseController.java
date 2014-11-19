@@ -25,6 +25,7 @@ public class CourseController extends BaseController{
 	@Autowired
 	private CourseBiz courseBiz;
 
+	
 	@RequestMapping(value = "/course/get", method = RequestMethod.GET)
 	public @ResponseBody
 	Map<String, Object> findCourse(@RequestParam("id") long id) {
