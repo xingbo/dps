@@ -1,12 +1,18 @@
 -- delete all dps database tables
 
 
-drop table if exists servprovider_to_servtype;
-drop table if exists user_to_servprovider;
-drop table if exists servtype;
-drop table if exists servprovider;
-drop table if exists clubcourtdetail;
-drop table if exists coachdetail;
-drop table if exists consumerdetail;
-drop table if exists user;
-drop table if exists userinfo;
+DROP TABLE IF EXISTS servprovider_to_servtype;
+DROP TABLE IF EXISTS user_to_servprovider;
+DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS attention;
+DROP TABLE IF EXISTS message;
+DROP TABLE IF EXISTS bill;
+DROP TABLE IF EXISTS course_user;
+DROP TABLE IF EXISTS coach_user;
+DROP TABLE IF EXISTS consumer_user;
+DROP TABLE IF EXISTS course;
+DROP TABLE IF EXISTS servtype;
+DROP TABLE IF EXISTS servprovider;
+DROP TABLE IF EXISTS user;
+
+COMMIT;
