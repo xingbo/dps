@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS message;
 DROP TABLE IF EXISTS bill;
 DROP TABLE IF EXISTS course_user;
 DROP TABLE IF EXISTS coach_user;
-DROP TABLE IF EXISTS consumer_user;
+DROP TABLE IF EXISTS consume_user;
 DROP TABLE IF EXISTS course;
 DROP TABLE IF EXISTS servtype;
 DROP TABLE IF EXISTS servprovider;

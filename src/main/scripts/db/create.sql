@@ -6,46 +6,79 @@ CREATE TABLE user
 (
   id INT UNSIGNED AUTO_INCREMENT,
   loginname VARCHAR(64),
-  password VARCHAR(64),
+  nickname VARCHAR(64),
+  avatar VARCHAR(128),
+  password VARCHAR(128),
   email VARCHAR(64),
-  phone VARCHAR(64),
+  phone VARCHAR(24),
   type TINYINT,
   status TINYINT,
   createdate TIMESTAMP,
   updatedate TIMESTAMP,
+  activecode VARCHAR(64),
+  isphonevalid TINYINT(1),
+  isemailvalid TINYINT(1),
   CONSTRAINT user_pk PRIMARY KEY (id)
 ) DEFAULT CHARSET = utf8;
 
--- TABLE: CONSUMER_USER
-CREATE TABLE consumer_user
+-- TABLE: CONSUME_USER
+CREATE TABLE consume_user
 (
   userid INT UNSIGNED,
-  rank TINYINT,
   truename VARCHAR(64),
   gender TINYINT(1),
-  birthday date,
-  hobby VARCHAR(255),
-  address VARCHAR(255),
+  birth DATE,
+  country VARCHAR(64),
+  provnice VARCHAR(64),
+  city VARCHAR(64),
+  district VARCHAR(64),
+  street VARCHAR(128),
+  apartment VARCHAR(128),
   description VARCHAR(512),
-  CONSTRAINT co_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
+  CONSTRAINT consu_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
 ) DEFAULT CHARSET = utf8;
 
 -- TABLE: COACH_USER
 CREATE TABLE coach_user
 (
   userid INT UNSIGNED,
-  rank TINYINT,
   truename VARCHAR(64),
   gender TINYINT(1),
-  birthday DATE,
-  address VARCHAR(255),
+  birth DATE,
+  country VARCHAR(64),
+  provnice VARCHAR(64),
+  city VARCHAR(64),
+  district VARCHAR(64),
+  street VARCHAR(128),
+  apartment VARCHAR(128),
   description VARCHAR(512),
-  major VARCHAR(255),
-  majorlevel VARCHAR(255),
-  certification VARCHAR(512),
-  servicearea VARCHAR(512),
-  CONSTRAINT ca_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
+  idcard VARCHAR(128),
+  photo VARCHAR(128),
+  servicearea VARCHAR(255),
+  status TINYINT,
+  CONSTRAINT coach_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
 ) DEFAULT CHARSET = utf8;
+
+-- TABLE: CERTIFICATION
+CREATE TABLE certification
+(
+  userid INT UNSIGNED,
+  sportid INT UNSIGNED,
+  level VARCHAR(255),
+  certification VARCHAR(255),
+  CONSTRAINT cert_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id),
+  CONSTRAINT cert_sport_fk_1 FOREIGN KEY (sport) REFERENCES SPORT_TYPE(id)
+) DEFAULT CHARSET = utf8;
+
+-- TABLE: SPORT_TYPE
+CREATE TABLE sport_type
+(
+  id INT UNSIGNED AUTO_INCREMENT,
+  sportname VARCHAR(64),
+  sportdesc VARCHAR(512),
+  CONSTRAINT sport_type_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
 
 
 -- TABLE: SERVPROVIDER
