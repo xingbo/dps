@@ -1,6 +1,10 @@
 -- Initialize create database tables
 
 
+-- ------------------------------------------------------
+--  User relative tables
+-- ------------------------------------------------------
+
 -- TABLE: USER
 CREATE TABLE user
 (
@@ -13,8 +17,8 @@ CREATE TABLE user
   phone VARCHAR(24),
   type TINYINT,
   status TINYINT,
-  createdate TIMESTAMP,
-  updatedate TIMESTAMP,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
   activecode VARCHAR(64),
   isphonevalid TINYINT(1),
   isemailvalid TINYINT(1),
@@ -35,8 +39,9 @@ CREATE TABLE consume_user
   street VARCHAR(128),
   apartment VARCHAR(128),
   description VARCHAR(512),
-  CONSTRAINT consu_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
+  CONSTRAINT consu_user_fk_1 FOREIGN KEY (userid) REFERENCES user(id)
 ) DEFAULT CHARSET = utf8;
+
 
 -- TABLE: COACH_USER
 CREATE TABLE coach_user
@@ -56,19 +61,54 @@ CREATE TABLE coach_user
   photo VARCHAR(128),
   servicearea VARCHAR(255),
   status TINYINT,
-  CONSTRAINT coach_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id)
+  CONSTRAINT coach_user_fk_1 FOREIGN KEY (userid) REFERENCES user(id)
 ) DEFAULT CHARSET = utf8;
 
--- TABLE: CERTIFICATION
-CREATE TABLE certification
+
+-- TABLE: COACH_CERTIFICATION
+CREATE TABLE coach_certification
 (
   userid INT UNSIGNED,
   sportid INT UNSIGNED,
-  level VARCHAR(255),
+  content VARCHAR(512),
   certification VARCHAR(255),
-  CONSTRAINT cert_user_fk_1 FOREIGN KEY (userid) REFERENCES USER(id),
-  CONSTRAINT cert_sport_fk_1 FOREIGN KEY (sport) REFERENCES SPORT_TYPE(id)
+  createtime TIMESTAMP,
+  verifycontent VARCHAR(512),
+  verifytime TIMESTAMP,
+  status TINYINT,
+  CONSTRAINT cert_user_fk_1 FOREIGN KEY (userid) REFERENCES user(id),
+  CONSTRAINT cert_sport_fk_1 FOREIGN KEY (sportid) REFERENCES sport_type(id)
 ) DEFAULT CHARSET = utf8;
+
+
+-- TABLE: PICTURE
+CREATE TABLE picture
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  path VARCHAR(128),
+  createtime TIMESTAMP,
+  status TINYINT,
+  CONSTRAINT picture_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+
+-- TABLE: PICTURE_REL
+CREATE TABLE picture_rel
+(
+  picid BIGINT UNSIGNED,
+  userid INT UNSIGNED,
+  courseid BIGINT UNSIGNED,
+  createtime TIMESTAMP,
+  type TINYINT(1),
+  CONSTRAINT picture_fk_1 FOREIGN KEY (picid) REFERENCES picture(id),
+  CONSTRAINT picture_to_user_fk_2 FOREIGN KEY (userid) REFERENCES user(id),
+  CONSTRAINT picture_to_course_fk_3 FOREIGN KEY (courseid) REFERENCES course(id)
+) DEFAULT CHARSET = utf8;
+
+
+-- ------------------------------------------------------
+--  SP/SPORT relative tables
+-- ------------------------------------------------------
 
 -- TABLE: SPORT_TYPE
 CREATE TABLE sport_type
@@ -76,73 +116,50 @@ CREATE TABLE sport_type
   id INT UNSIGNED AUTO_INCREMENT,
   sportname VARCHAR(64),
   sportdesc VARCHAR(512),
+  favusernum INT UNSIGNED,
+  favcoursenum INT UNSIGNED,
   CONSTRAINT sport_type_pk PRIMARY KEY (id)
 ) DEFAULT CHARSET = utf8;
 
 
+-- TABLE: SPORT_USER_REL
+CREATE TABLE SPORT_USER_REL
+(
+  sportid INT UNSIGNED,
+  userid INT UNSIGNED,
+  CONSTRAINT sport_fk_1 FOREIGN KEY (sportid) REFERENCES sport_type(id),
+  CONSTRAINT user_fk_2 FOREIGN KEY (userid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
 
--- TABLE: SERVPROVIDER
-CREATE TABLE servprovider
+-- TABLE: SP
+CREATE TABLE sp
 (
   id INT UNSIGNED AUTO_INCREMENT,
   name VARCHAR(128),
-  country VARCHAR(64),
-  province VARCHAR(64),
-  city VARCHAR(64),
-  district VARCHAR(64),
-  address VARCHAR(255),
-  phone VARCHAR(64),
-  advertisementimage VARCHAR(255),
-  certificationimage VARCHAR(255),
   description VARCHAR(255),
-  category TINYINT,
+  userid BIGINT UNSIGNED,
   status  TINYINT,
-  createdate TIMESTAMP,
-  updatedate TIMESTAMP,
-  CONSTRAINT servprovider_pk PRIMARY KEY (id)
-) DEFAULT CHARSET=utf8;
+  createtime TIMESTAMP,
+  verifytime TIMESTAMP,
+  CONSTRAINT sp_pk PRIMARY KEY (id),
+  CONSTRAINT sp_to_user_fk_1 FOREIGN KEY (userid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
 
 
--- TABLE: USER_TO_SERVPROVIDER
-CREATE TABLE user_to_servprovider
+-- TABLE: SP_SPORT_REL
+CREATE TABLE sp_sport_rel
 (
-  id INT UNSIGNED AUTO_INCREMENT,
-  uid INT,
   spid INT,
-  isOwner TINYINT(1),
-  status  TINYINT,
-  createdate TIMESTAMP,
-  updatedate TIMESTAMP,
-  CONSTRAINT user_to_servprovider_pk PRIMARY KEY (id),
-  CONSTRAINT user_to_servprovider_fk_1 FOREIGN KEY (uid) REFERENCES USER(id),
-  CONSTRAINT user_to_servprovider_fk_2 FOREIGN KEY (spid) REFERENCES SERVPROVIDER(id)
-) DEFAULT CHARSET=utf8;
+  sportid INT,
+  CONSTRAINT sp_fk_1 FOREIGN KEY (spid) REFERENCES sp(id),
+  CONSTRAINT sport_fk_2 FOREIGN KEY (sportid) REFERENCES sport_type(id)
+) DEFAULT CHARSET = utf8;
 
 
--- TABLE: SERVTYPE
-CREATE TABLE servtype
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  servtypename VARCHAR(255),
-  servtypedesc VARCHAR(255),
-  CONSTRAINT servtype_pk PRIMARY KEY (id)
-) DEFAULT CHARSET=utf8;
 
-
--- TABLE: SERVPROVIDER_TO_SERVTYPE
-CREATE TABLE servprovider_to_servtype
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  spid INT,
-  stid INT,
-  status TINYINT,
-  createdate TIMESTAMP,
-  updatedate TIMESTAMP,
-  CONSTRAINT servprovider_to_servtype_pk PRIMARY KEY (id),
-  CONSTRAINT servprovider_to_servtype_fk_1 FOREIGN KEY (spid) REFERENCES servprovider(id),
-  CONSTRAINT servprovider_to_servtype_fk_2 FOREIGN KEY (stid) REFERENCES servtype(id)
-) DEFAULT CHARSET=utf8;
-
+-- ------------------------------------------------------
+--  COURSE relative tables
+-- ------------------------------------------------------
 
 -- TABLE: COURSE
 CREATE TABLE course
@@ -155,10 +172,9 @@ CREATE TABLE course
   coursedetail VARCHAR(512),
   courseaddress VARCHAR(255),
   contactphone VARCHAR(64),
-  createdate TIMESTAMP,
-  publishdate TIMESTAMP,
-  enddate TIMESTAMP,
-  offlinedate TIMESTAMP,
+  publishtime TIMESTAMP,
+  enrollendtime TIMESTAMP,
+  attendtime TIMESTAMP,
   minrequiredperson INT,
   maxallowedperson INT,
   actualperson INT,
@@ -172,6 +188,7 @@ CREATE TABLE course
   CONSTRAINT course_to_coach_fk_3 FOREIGN KEY (teacherid) REFERENCES user(id)
 ) DEFAULT CHARSET = utf8;
 
+
 -- TABLE: COURSE_USER
 CREATE TABLE course_user
 (
@@ -183,40 +200,6 @@ CREATE TABLE course_user
   CONSTRAINT course_user_pk PRIMARY KEY (courseid, studentid),
   CONSTRAINT course_user_fk_1 FOREIGN KEY (courseid) REFERENCES course(id),
   CONSTRAINT course_user_fk_2 FOREIGN KEY (studentid) REFERENCES user(id)
-) DEFAULT CHARSET = utf8;
-
--- TABLE: BILL
-CREATE TABLE bill
-(
-  bid BIGINT UNSIGNED AUTO_INCREMENT,
-  buyerid INT UNSIGNED,
-  sellerid INT UNSIGNED,
-  courseid BIGINT UNSIGNED,
-  createtime TIMESTAMP,
-  paytime TIMESTAMP,
-  number TINYINT,
-  price DECIMAL(10,2),
-  totalfee DECIMAL(10,2),
-  status TINYINT,
-  gatewayid BIGINT,
-  CONSTRAINT bill_pk PRIMARY KEY (bid),
-  CONSTRAINT bill_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES user(id),
-  CONSTRAINT bill_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES user(id),
-  CONSTRAINT bill_to_course_fk_3 FOREIGN KEY (courseid) REFERENCES user(id)
-) DEFAULT CHARSET = utf8;
-
--- TABLE: MESSAGE
-CREATE TABLE message
-(
-  id BIGINT UNSIGNED AUTO_INCREMENT,
-  srcid INT UNSIGNED,
-  dstid INT UNSIGNED,
-  message VARCHAR(1024),
-  status TINYINT,
-  isdelete TINYINT,
-  CONSTRAINT user_message_pk PRIMARY KEY (id),
-  CONSTRAINT user_message_fk_1 FOREIGN KEY (srcid) REFERENCES USER(id),
-  CONSTRAINT user_message_fk_2 FOREIGN KEY (dstid) REFERENCES USER(id)
 ) DEFAULT CHARSET = utf8;
 
 
@@ -240,14 +223,166 @@ CREATE TABLE comment
 CREATE TABLE attention
 (
   id BIGINT UNSIGNED AUTO_INCREMENT,
-  faner INT UNSIGNED,
-  fanee INT UNSIGNED,
-  course BIGINT UNSIGNED,
+  fanee INT UNSIGNED,   -- 关注者
+  faner INT UNSIGNED,   -- 被关注者
+  course BIGINT UNSIGNED,  -- 被关注课程
   type TINYINT(1),    -- 1表示关注教练，2表示关注课程
   CONSTRAINT attention_pk PRIMARY KEY (id),
-  CONSTRAINT attention_to_user_fk_1 FOREIGN KEY (faner) REFERENCES user(id),
-  CONSTRAINT attention_to_user_fk_2 FOREIGN KEY (fanee) REFERENCES user(id),
+  CONSTRAINT attention_to_user_fk_1 FOREIGN KEY (fanee) REFERENCES user(id),
+  CONSTRAINT attention_to_user_fk_2 FOREIGN KEY (faner) REFERENCES user(id),
   CONSTRAINT attention_to_course_fk_3 FOREIGN KEY (course) REFERENCES course(id)
 ) DEFAULT CHARSET = utf8;
+
+
+-- ------------------------------------------------------
+--  Miscellaneous relative tables
+-- ------------------------------------------------------
+
+-- TABLE: NOTICE
+CREATE TABLE NOTICE
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  content VARCHAR(1024),
+  createtime TIMESTAMP,
+  status TINYINT,
+  CONSTRAINT notice_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+
+-- TABLE: NOTICE_USER
+CREATE TABLE NOTICE_USER
+(
+  noticeid BIGINT UNSIGNED,
+  userid BIGINT UNSIGNED,
+  status TINYINT,
+  CONSTRAINT notice_fk_1 FOREIGN KEY (noticeid) REFERENCES notice(id),
+  CONSTRAINT notice_to_user_fk_2 FOREIGN KEY (userid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+-- TABLE: FEEDBACK
+CREATE TABLE feedback
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  title VARCHAR(256),
+  content VARCHAR(1024),
+  createtime TIMESTAMP,
+  userid BIGINT UNSIGNED,
+  reply VARCHAR(1024),
+  replytime TIMESTAMP,
+  status TINYINT,
+  CONSTRAINT feedback_pk PRIMARY KEY (id),
+  CONSTRAINT feedback_to_user_fk_1 FOREIGN KEY (userid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+
+-- ------------------------------------------------------
+--  Order relative tables
+-- ------------------------------------------------------
+
+CREATE TABLE ledgerPayment
+(
+  transtrackingid VARCHAR(255),
+  payerid INT UNSIGNED,
+  payeeid INT UNSIGNED,
+  entityreferenceid VARCHAR(255),
+  amount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT payment_pk PRIMARY KEY (transtrackingid),
+  CONSTRAINT payment_to_payer_fk_1 FOREIGN KEY (payerid) REFERENCES user(id),
+  CONSTRAINT payment_to_payee_fk_2 FOREIGN KEY (payeeid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE ledgerRefund
+(
+  transtrackingid VARCHAR(255),
+  payerid INT UNSIGNED,
+  payeeid INT UNSIGNED,
+  entityreferenceid VARCHAR(255),
+  amount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT refund_pk PRIMARY KEY (transtrackingid),
+  CONSTRAINT refund_to_payer_fk_1 FOREIGN KEY (payerid) REFERENCES user(id),
+  CONSTRAINT refund_to_payee_fk_2 FOREIGN KEY (payeeid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE ledgerRelease
+(
+  transtrackingid VARCHAR(255),
+  payerid INT UNSIGNED,
+  payeeid INT UNSIGNED,
+  entityreferenceid VARCHAR(255),
+  amount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT release_pk PRIMARY KEY (transtrackingid),
+  CONSTRAINT release_to_payer_fk_1 FOREIGN KEY (payerid) REFERENCES user(id),
+  CONSTRAINT release_to_payee_fk_2 FOREIGN KEY (payeeid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE order
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  buyerid INT UNSIGNED,
+  sellerid INT UNSIGNED,
+  amount DECIMAL(10,2),
+  refundamount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT order_pk PRIMARY KEY (id),
+  CONSTRAINT order_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES user(id),
+  CONSTRAINT order_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE orderitem
+(
+  orderid BIGINT UNSIGNED,
+  itemid INT UNSIGNED,
+  price DECIMAL(10,2),
+  number INT UNSIGNED,
+  amount DECIMAL(10,2),
+  refundamount DECIMAL(10,2),
+  CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES order(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE orderhist
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  buyerid INT UNSIGNED,
+  sellerid INT UNSIGNED,
+  amount DECIMAL(10,2),
+  refundamount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT orderhist_pk PRIMARY KEY (id),
+  CONSTRAINT orderhist_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES user(id),
+  CONSTRAINT orderhist_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES user(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE orderitemhist
+(
+  orderid BIGINT UNSIGNED,
+  itemid INT UNSIGNED,
+  price DECIMAL(10,2),
+  number INT UNSIGNED,
+  amount DECIMAL(10,2),
+  refundamount DECIMAL(10,2),
+  CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES order(id)
+) DEFAULT CHARSET = utf8;
+
 
 COMMIT;
