@@ -24,6 +24,46 @@ public class CourseController extends BaseController{
 
 	@Autowired
 	private CourseBiz courseBiz;
+	
+	
+	//查询所有课程  按最近排序
+	@RequestMapping(value = "/course/paged/list", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> listPagedCourses(@RequestParam("start") int start, @RequestParam("limit") int limit) {
+		try{
+			//PagedResult<Course> results = courseBiz.listPagedCourses(start, limit);
+			PagedResult<Course> results = new PagedResult<Course>();
+			Course c = new Course();
+			c.setAddress("������������");
+			c.setCourseTime(new Date());
+			c.setCode("123456");
+			results.addResult(c);
+			return pagedResult(results.getResults(), results.getTotal());
+		} catch(Exception e) {
+			logger.error("errer message", e);
+			return pagedResult(new ArrayList<Course>(), 0);
+		}
+	}
+
+	
+	//获取我订购的课程
+	@RequestMapping(value = "/course/ordered/paged/list", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> listMyOrderedCourses(@RequestParam("userId") long userId,  @RequestParam("start") int start, @RequestParam("limit") int limit) {
+		try{
+			//PagedResult<Course> results = courseBiz.listPagedCourses(start, limit);
+			PagedResult<Course> results = new PagedResult<Course>();
+			Course c = new Course();
+			c.setAddress("������������");
+			c.setCourseTime(new Date());
+			c.setCode("123456");
+			results.addResult(c);
+			return pagedResult(results.getResults(), results.getTotal());
+		} catch(Exception e) {
+			logger.error("errer message", e);
+			return pagedResult(new ArrayList<Course>(), 0);
+		}
+	}
 
 	
 	@RequestMapping(value = "/course/get", method = RequestMethod.GET)
@@ -38,19 +78,9 @@ public class CourseController extends BaseController{
 			return data(null);
 		}
 	}
-
-	@RequestMapping(value = "/course/paged/list", method = RequestMethod.GET)
-	public @ResponseBody
-	Map<String, Object> listPagedCourses(@RequestParam("start") int start, @RequestParam("limit") int limit) {
-		try{
-			// TODO Auto-generated method stub
-			PagedResult<Course> results = courseBiz.listPagedCourses(start, limit);
-			return pagedResult(results.getResults(), results.getTotal());
-		} catch(Exception e) {
-			logger.error("errer message", e);
-			return pagedResult(new ArrayList<Course>(), 0);
-		}
-	}
+	
+	
+	
 
 	@RequestMapping(value = "/course/save", method = RequestMethod.POST)
 	public @ResponseBody

@@ -25,6 +25,48 @@ public class MsgController extends BaseController{
 	@Autowired
 	private MsgBiz msgBiz;
 
+	//查询用户消息
+	@RequestMapping(value = "/msg/paged/list", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> listPagedMsgs(@RequestParam("userId") long userId, @RequestParam("start") int start, @RequestParam("limit") int limit) {
+		try{
+			// TODO Auto-generated method stub
+			//PagedResult<Msg> results = msgBiz.listPagedMsgs(start, limit);
+			PagedResult<Msg> results = new PagedResult<Msg>();
+			Msg msg = new Msg();
+			msg.setContent("消息内容");
+			msg.setCreateDate(new Date());
+			msg.setId(1);
+			results.addResult(msg);
+			return pagedResult(results.getResults(), results.getTotal());
+		} catch(Exception e) {
+			logger.error("errer message", e);
+			return pagedResult(new ArrayList<Msg>(), 0);
+		}
+	}
+
+	//查询用户未读消息
+	@RequestMapping(value = "/msg/unread/paged/list", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> listUnreadedMsgs(@RequestParam("userId") long userId, @RequestParam("start") int start, @RequestParam("limit") int limit) {
+		try{
+			// TODO Auto-generated method stub
+			//PagedResult<Msg> results = msgBiz.listPagedMsgs(start, limit);
+			PagedResult<Msg> results = new PagedResult<Msg>();
+			Msg msg = new Msg();
+			msg.setContent("消息内容");
+			msg.setCreateDate(new Date());
+			msg.setId(1);
+			results.addResult(msg);
+			return pagedResult(results.getResults(), results.getTotal());
+		} catch(Exception e) {
+			logger.error("errer message", e);
+			return pagedResult(new ArrayList<Msg>(), 0);
+		}
+	}
+	
+	
+
 	@RequestMapping(value = "/msg/get", method = RequestMethod.GET)
 	public @ResponseBody
 	Map<String, Object> findMsg(@RequestParam("id") long id) {

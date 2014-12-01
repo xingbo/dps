@@ -26,10 +26,25 @@ public class UserController extends BaseController{
 
 	@Autowired
 	private UserBiz userBiz;
-
+	
+	//注册用户
+	@RequestMapping(value = "/user/regist", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> registeUser(User user) {
+		try{
+			// TODO Auto-generated method stub
+			//PagedResult<UserListVo> results = userBiz.listPagedUsers(start, limit);
+			return success();
+		} catch(Exception e) {
+			logger.error("errer message", e);
+			return fail();
+		}
+	}
+	
+	//获取用户信息
 	@RequestMapping(value = "/user/get", method = RequestMethod.GET)
 	public @ResponseBody
-	Map<String, Object> findUser(@RequestParam("id") long id) {
+	Map<String, Object> findUser(@RequestParam("userId") long userId) {
 		try{
 			// TODO Auto-generated method stub
 			User user = userBiz.findUserById(id);
@@ -40,6 +55,8 @@ public class UserController extends BaseController{
 		}
 	}
 
+	
+	
 	@RequestMapping(value = "/user/paged/list", method = RequestMethod.GET)
 	public @ResponseBody
 	Map<String, Object> listPagedUsers(@RequestParam("start") int start, @RequestParam("limit") int limit) {
@@ -88,7 +105,7 @@ public class UserController extends BaseController{
 			if(null!=user.getPassword())
 				userBiz.modifyUserPassword(user.getId(), oldPassword, user.getPassword());
 			userBiz.modifyUserInfo(user);
-			//TODO 如果用户修改了手机号码，则需要提醒用户下次用新的手机号码登陆
+			//TODO ������������������������������������������������������������������������������������������
 			return success();
 		} catch(Exception e) {
 			logger.error("errer message", e);
