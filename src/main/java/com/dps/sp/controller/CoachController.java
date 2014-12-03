@@ -1,4 +1,4 @@
-package com.dps.sp.coach.controller;
+package com.dps.sp.controller;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dps.common.vo.PagedResult;
 import com.dps.common.web.BaseController;
-import com.dps.sp.coach.service.CoachBiz;
-import com.dps.sp.coach.vo.Coach;
+import com.dps.sp.vo.Coach;
+import com.dps.user.CoachBiz;
+
 
 @Controller
 public class CoachController extends BaseController{
@@ -68,7 +69,7 @@ public class CoachController extends BaseController{
 	Map<String, Object> findCoach(@RequestParam("coachId") long coachId) {
 		try{
 			// TODO Auto-generated method stub
-			Coach coach = coachBiz.findCoach(id);
+			Coach coach = coachBiz.findCoach(coachId);
 			return data(coach);
 		} catch(Exception e) {
 			logger.error("errer message", e);

@@ -47,7 +47,7 @@ public class UserController extends BaseController{
 	Map<String, Object> findUser(@RequestParam("userId") long userId) {
 		try{
 			// TODO Auto-generated method stub
-			User user = userBiz.findUserById(id);
+			User user = userBiz.findUserById(userId);
 			return data(user);
 		} catch(Exception e) {
 			logger.error("errer message", e);
