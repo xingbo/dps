@@ -1,5 +1,5 @@
 -- Initialize create database tables
--- total 29 tables 
+-- total 29 tables
 
 
 -- ------------------------------------------------------
@@ -256,7 +256,7 @@ CREATE TABLE notice
 CREATE TABLE notice_user
 (
   noticeid BIGINT UNSIGNED,
-  userid BIGINT UNSIGNED,
+  userid INT UNSIGNED,
   status TINYINT,
   CONSTRAINT notice_fk_1 FOREIGN KEY (noticeid) REFERENCES notice(id),
   CONSTRAINT notice_to_user_fk_2 FOREIGN KEY (userid) REFERENCES usr(id)
@@ -336,6 +336,8 @@ CREATE TABLE orders
   id BIGINT UNSIGNED AUTO_INCREMENT,
   buyerid INT UNSIGNED,
   sellerid INT UNSIGNED,
+  price DECIMAL(10,2),
+  quantity TINYINT,
   amount DECIMAL(10,2),
   refundamount DECIMAL(10,2),
   status TINYINT,
@@ -347,46 +349,18 @@ CREATE TABLE orders
 ) DEFAULT CHARSET = utf8;
 
 
-CREATE TABLE orderitem
+CREATE TABLE orders_revision
 (
   orderid BIGINT UNSIGNED,
-  itemid INT UNSIGNED,
-  price DECIMAL(10,2),
-  number INT UNSIGNED,
-  amount DECIMAL(10,2),
-  refundamount DECIMAL(10,2),
-  CONSTRAINT item_to_order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id)
-) DEFAULT CHARSET = utf8;
-
-
-CREATE TABLE ordershist
-(
-  id BIGINT UNSIGNED AUTO_INCREMENT,
-  buyerid INT UNSIGNED,
-  sellerid INT UNSIGNED,
-  amount DECIMAL(10,2),
-  refundamount DECIMAL(10,2),
-  status TINYINT,
+  prestatus TINYINT,
+  nextstatus TINYINT,
+  operatorid INT,
+  operation VARCHAR(128),
+  description VARCHAR(255),
   createtime TIMESTAMP,
-  updatetime TIMESTAMP,
-  CONSTRAINT orderhist_pk PRIMARY KEY (id),
-  CONSTRAINT orderhist_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES usr(id),
-  CONSTRAINT orderhist_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES usr(id)
+  CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id),
+  CONSTRAINT sys_user_fk_2 FOREIGN KEY (operatorid) REFERENCES sys_user(id)
 ) DEFAULT CHARSET = utf8;
-
-
-CREATE TABLE orderitemhist
-(
-  orderid BIGINT UNSIGNED,
-  itemid INT UNSIGNED,
-  price DECIMAL(10,2),
-  number INT UNSIGNED,
-  amount DECIMAL(10,2),
-  refundamount DECIMAL(10,2),
-  CONSTRAINT itemhist_to_order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id)
-) DEFAULT CHARSET = utf8;
-
-
 
 -- ------------------------------------------------------
 --  Server side authority management tables
