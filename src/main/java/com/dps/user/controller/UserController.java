@@ -100,10 +100,10 @@ public class UserController extends BaseController{
 	Map<String, Object> updateUser(User user, String oldPassword) {
 		try{
 			// TODO Auto-generated method stub
-			if(null!=user.getName())
+			if(null!=user.getLoginName())
 				userBiz.modifyUserName(user.getId(), user.getName());
 			if(null!=user.getPassword())
-				userBiz.modifyUserPassword(user.getId(), oldPassword, user.getPassword());
+				userBiz.modifyUserPassword(user.getUserId(), oldPassword, user.getPassword());
 			userBiz.modifyUserInfo(user);
 			//TODO ������������������������������������������������������������������������������������������
 			return success();
