@@ -78,6 +78,45 @@ CREATE TABLE picture
 
 
 -- ------------------------------------------------------
+--  Server side authority management tables
+-- ------------------------------------------------------
+
+CREATE TABLE sys_user
+(
+  id INT UNSIGNED AUTO_INCREMENT,
+  name VARCHAR(255),
+  description VARCHAR(255),
+  email VARCHAR(64),
+  mobile VARCHAR(24),
+  status TINYINT(1),
+  createtime TIMESTAMP,
+  logintime TIMESTAMP,
+  lastlogintime TIMESTAMP,
+  lastlogouttime TIMESTAMP,
+  CONSTRAINT sys_user_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+CREATE TABLE role
+(
+  id INT UNSIGNED AUTO_INCREMENT,
+  name VARCHAR(255),
+  description VARCHAR(255),
+  type TINYINT(1),
+  visible TINYINT(1),
+  editable TINYINT(1),
+  CONSTRAINT role_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+CREATE TABLE user_role_rel
+(
+  userid INT UNSIGNED,
+  roleid INT UNSIGNED,
+  CONSTRAINT sys_user_fk_1 FOREIGN KEY (userid) REFERENCES sys_user(id),
+  CONSTRAINT role_fk_2 FOREIGN KEY (roleid) REFERENCES role(id)
+) DEFAULT CHARSET = utf8;
+
+
+-- ------------------------------------------------------
 --  SP/SPORT relative tables
 -- ------------------------------------------------------
 
@@ -118,11 +157,11 @@ CREATE TABLE sport_user_rel
 ) DEFAULT CHARSET = utf8;
 
 
--- TABLE: COACH_CERT_REL
-CREATE TABLE coach_cert_rel
+-- TABLE: SP_CERT_REL
+CREATE TABLE sp_cert_rel
 (
   userid INT UNSIGNED,
-  sportid INT UNSIGNED,
+  spid INT UNSIGNED,
   content VARCHAR(512),
   certification VARCHAR(255),
   createtime TIMESTAMP,
@@ -130,7 +169,7 @@ CREATE TABLE coach_cert_rel
   verifytime TIMESTAMP,
   status TINYINT,
   CONSTRAINT cert_user_fk_1 FOREIGN KEY (userid) REFERENCES usr(id),
-  CONSTRAINT cert_sport_fk_1 FOREIGN KEY (sportid) REFERENCES sport_type(id)
+  CONSTRAINT cert_sport_fk_1 FOREIGN KEY (spid) REFERENCES sp(id)
 ) DEFAULT CHARSET = utf8;
 
 
@@ -144,9 +183,45 @@ CREATE TABLE sp_sport_rel
 ) DEFAULT CHARSET = utf8;
 
 
+-- ------------------------------------------------------
+--  Orders relative tables
+-- ------------------------------------------------------
+
+CREATE TABLE orders
+(
+  id BIGINT UNSIGNED AUTO_INCREMENT,
+  trackingid VARCHAR(255),
+  buyerid INT UNSIGNED,
+  sellerid INT UNSIGNED,
+  price DECIMAL(10,2),
+  quantity TINYINT,
+  amount DECIMAL(10,2),
+  refundamount DECIMAL(10,2),
+  status TINYINT,
+  createtime TIMESTAMP,
+  updatetime TIMESTAMP,
+  CONSTRAINT order_pk PRIMARY KEY (id),
+  CONSTRAINT order_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES usr(id),
+  CONSTRAINT order_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES usr(id)
+) DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE orders_revision
+(
+  orderid BIGINT UNSIGNED,
+  prestatus TINYINT,
+  nextstatus TINYINT,
+  opid INT,
+  opaction VARCHAR(128),
+  opdescription VARCHAR(255),
+  createtime TIMESTAMP,
+  CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id),
+  CONSTRAINT sys_user_fk_2 FOREIGN KEY (opid) REFERENCES sys_user(id)
+) DEFAULT CHARSET = utf8;
+
 
 -- ------------------------------------------------------
---  COURSE relative tables
+--  Course relative tables
 -- ------------------------------------------------------
 
 -- TABLE: COURSE
@@ -154,7 +229,6 @@ CREATE TABLE course
 (
   id BIGINT UNSIGNED AUTO_INCREMENT,
   spid INT,
-  stid INT,
   coachid INT,
   coursename VARCHAR(255),
   coursedetail VARCHAR(512),
@@ -173,7 +247,6 @@ CREATE TABLE course
   courserank INT,
   CONSTRAINT course_pk PRIMARY KEY (id),
   CONSTRAINT course_to_sp_fk_1 FOREIGN KEY (spid) REFERENCES sp(id),
-  CONSTRAINT course_to_sport_type_fk_2 FOREIGN KEY (stid) REFERENCES sport_type(id),
   CONSTRAINT course_to_coach_fk_3 FOREIGN KEY (coachid) REFERENCES usr(id)
 ) DEFAULT CHARSET = utf8;
 
@@ -284,46 +357,7 @@ CREATE TABLE feedback
 
 
 -- ------------------------------------------------------
---  Server side authority management tables
--- ------------------------------------------------------
-
-CREATE TABLE sys_user
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255),
-  description VARCHAR(255),
-  email VARCHAR(64),
-  mobile VARCHAR(24),
-  status TINYINT(1),
-  createtime TIMESTAMP,
-  logintime TIMESTAMP,
-  lastlogintime TIMESTAMP,
-  lastlogouttime TIMESTAMP,
-  CONSTRAINT sys_user_pk PRIMARY KEY (id)
-) DEFAULT CHARSET = utf8;
-
-CREATE TABLE role
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255),
-  description VARCHAR(255),
-  type TINYINT(1),
-  visible TINYINT(1),
-  editable TINYINT(1),
-  CONSTRAINT role_pk PRIMARY KEY (id)
-) DEFAULT CHARSET = utf8;
-
-CREATE TABLE user_role_rel
-(
-  userid INT UNSIGNED,
-  roleid INT UNSIGNED,
-  CONSTRAINT sys_user_fk_1 FOREIGN KEY (userid) REFERENCES sys_user(id),
-  CONSTRAINT role_fk_2 FOREIGN KEY (roleid) REFERENCES role(id)
-) DEFAULT CHARSET = utf8;
-
-
--- ------------------------------------------------------
---  Order relative tables
+--  Payment gateway tables
 -- ------------------------------------------------------
 
 CREATE TABLE ledgerPayment
@@ -371,39 +405,6 @@ CREATE TABLE ledgerRelease
   CONSTRAINT release_pk PRIMARY KEY (transtrackingid),
   CONSTRAINT release_to_payer_fk_1 FOREIGN KEY (payerid) REFERENCES usr(id),
   CONSTRAINT release_to_payee_fk_2 FOREIGN KEY (payeeid) REFERENCES usr(id)
-) DEFAULT CHARSET = utf8;
-
-
-CREATE TABLE orders
-(
-  id BIGINT UNSIGNED AUTO_INCREMENT,
-  trackingid VARCHAR(255),
-  buyerid INT UNSIGNED,
-  sellerid INT UNSIGNED,
-  price DECIMAL(10,2),
-  quantity TINYINT,
-  amount DECIMAL(10,2),
-  refundamount DECIMAL(10,2),
-  status TINYINT,
-  createtime TIMESTAMP,
-  updatetime TIMESTAMP,
-  CONSTRAINT order_pk PRIMARY KEY (id),
-  CONSTRAINT order_to_buyer_fk_1 FOREIGN KEY (buyerid) REFERENCES usr(id),
-  CONSTRAINT order_to_seller_fk_2 FOREIGN KEY (sellerid) REFERENCES usr(id)
-) DEFAULT CHARSET = utf8;
-
-
-CREATE TABLE orders_revision
-(
-  orderid BIGINT UNSIGNED,
-  prestatus TINYINT,
-  nextstatus TINYINT,
-  opid INT,
-  opaction VARCHAR(128),
-  opdescription VARCHAR(255),
-  createtime TIMESTAMP,
-  CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id),
-  CONSTRAINT sys_user_fk_2 FOREIGN KEY (opid) REFERENCES sys_user(id)
 ) DEFAULT CHARSET = utf8;
 
 
