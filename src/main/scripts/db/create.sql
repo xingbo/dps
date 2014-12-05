@@ -1,5 +1,5 @@
 -- Initialize create database tables
--- total 29 tables
+-- total 27 tables
 
 
 -- ------------------------------------------------------
@@ -71,7 +71,7 @@ CREATE TABLE picture
 (
   id BIGINT UNSIGNED AUTO_INCREMENT,
   path VARCHAR(128),
-  createtime TIMESTAMP,
+  uploadtime TIMESTAMP,
   status TINYINT,
   CONSTRAINT picture_pk PRIMARY KEY (id)
 ) DEFAULT CHARSET = utf8;
@@ -182,13 +182,16 @@ CREATE TABLE course
 CREATE TABLE course_user_rel
 (
   courseid BIGINT UNSIGNED,
-  studentid INT UNSIGNED,
-  createtime TIMESTAMP,
+  buyerid INT UNSIGNED,
+  orderid BIGINT UNSIGNED,
+  registertime TIMESTAMP,
+  paytime TIMESTAMP,
   consumetime TIMESTAMP,
   receipt VARCHAR(255),
-  CONSTRAINT course_user_pk PRIMARY KEY (courseid, studentid),
-  CONSTRAINT course_user_fk_1 FOREIGN KEY (courseid) REFERENCES course(id),
-  CONSTRAINT course_user_fk_2 FOREIGN KEY (studentid) REFERENCES usr(id)
+  CONSTRAINT course_user_pk PRIMARY KEY (courseid, buyerid),
+  CONSTRAINT course_fk_1 FOREIGN KEY (courseid) REFERENCES course(id),
+  CONSTRAINT course_user_fk_1 FOREIGN KEY (buyerid) REFERENCES usr(id),
+  CONSTRAINT course_order_fk_2 FOREIGN KEY (orderid) REFERENCES orders(id)
 ) DEFAULT CHARSET = utf8;
 
 
@@ -270,12 +273,52 @@ CREATE TABLE feedback
   title VARCHAR(256),
   content VARCHAR(1024),
   createtime TIMESTAMP,
-  userid BIGINT UNSIGNED,
-  reply VARCHAR(1024),
+  userid INT UNSIGNED,
+  replyerid INT UNSIGNED,
+  replycontent VARCHAR(1024),
   replytime TIMESTAMP,
   status TINYINT,
   CONSTRAINT feedback_pk PRIMARY KEY (id),
   CONSTRAINT feedback_to_user_fk_1 FOREIGN KEY (userid) REFERENCES usr(id)
+) DEFAULT CHARSET = utf8;
+
+
+-- ------------------------------------------------------
+--  Server side authority management tables
+-- ------------------------------------------------------
+
+CREATE TABLE sys_user
+(
+  id INT UNSIGNED AUTO_INCREMENT,
+  name VARCHAR(255),
+  description VARCHAR(255),
+  email VARCHAR(64),
+  mobile VARCHAR(24),
+  status TINYINT(1),
+  createtime TIMESTAMP,
+  logintime TIMESTAMP,
+  lastlogintime TIMESTAMP,
+  lastlogouttime TIMESTAMP,
+  CONSTRAINT sys_user_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+CREATE TABLE role
+(
+  id INT UNSIGNED AUTO_INCREMENT,
+  name VARCHAR(255),
+  description VARCHAR(255),
+  type TINYINT(1),
+  visible TINYINT(1),
+  editable TINYINT(1),
+  CONSTRAINT role_pk PRIMARY KEY (id)
+) DEFAULT CHARSET = utf8;
+
+CREATE TABLE user_role_rel
+(
+  userid INT UNSIGNED,
+  roleid INT UNSIGNED,
+  CONSTRAINT sys_user_fk_1 FOREIGN KEY (userid) REFERENCES sys_user(id),
+  CONSTRAINT role_fk_2 FOREIGN KEY (roleid) REFERENCES role(id)
 ) DEFAULT CHARSET = utf8;
 
 
@@ -334,6 +377,7 @@ CREATE TABLE ledgerRelease
 CREATE TABLE orders
 (
   id BIGINT UNSIGNED AUTO_INCREMENT,
+  trackingid VARCHAR(255),
   buyerid INT UNSIGNED,
   sellerid INT UNSIGNED,
   price DECIMAL(10,2),
@@ -354,50 +398,12 @@ CREATE TABLE orders_revision
   orderid BIGINT UNSIGNED,
   prestatus TINYINT,
   nextstatus TINYINT,
-  operatorid INT,
-  operation VARCHAR(128),
-  description VARCHAR(255),
+  opid INT,
+  opaction VARCHAR(128),
+  opdescription VARCHAR(255),
   createtime TIMESTAMP,
   CONSTRAINT order_fk_1 FOREIGN KEY (orderid) REFERENCES orders(id),
-  CONSTRAINT sys_user_fk_2 FOREIGN KEY (operatorid) REFERENCES sys_user(id)
-) DEFAULT CHARSET = utf8;
-
--- ------------------------------------------------------
---  Server side authority management tables
--- ------------------------------------------------------
-
-CREATE TABLE sys_user
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255),
-  description VARCHAR(255),
-  email VARCHAR(64),
-  mobile VARCHAR(24),
-  status TINYINT(1),
-  createtime TIMESTAMP,
-  logintime TIMESTAMP,
-  lastlogintime TIMESTAMP,
-  lastlogouttime TIMESTAMP,
-  CONSTRAINT sys_user_pk PRIMARY KEY (id)
-) DEFAULT CHARSET = utf8;
-
-CREATE TABLE role
-(
-  id INT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255),
-  description VARCHAR(255),
-  type TINYINT(1),
-  visible TINYINT(1),
-  editable TINYINT(1),
-  CONSTRAINT role_pk PRIMARY KEY (id)
-) DEFAULT CHARSET = utf8;
-
-CREATE TABLE user_role_rel
-(
-  userid INT UNSIGNED,
-  roleid INT UNSIGNED,
-  CONSTRAINT sys_user_fk_1 FOREIGN KEY (userid) REFERENCES sys_user(id),
-  CONSTRAINT role_fk_2 FOREIGN KEY (roleid) REFERENCES role(id)
+  CONSTRAINT sys_user_fk_2 FOREIGN KEY (opid) REFERENCES sys_user(id)
 ) DEFAULT CHARSET = utf8;
 
 
