@@ -1,3 +1,6 @@
+drop database dps;
+create database dps;
+use dps;
 -- Initialize create database tables
 -- total 29 tables 
 
@@ -23,7 +26,7 @@ CREATE TABLE usr
   activecode VARCHAR(64),
   isphonevalid TINYINT(1),
   isemailvalid TINYINT(1),
-  CONSTRAINT user_pk PRIMARY KEY (id)
+  CONSTRAINT usr_pk PRIMARY KEY (id)
 ) DEFAULT CHARSET = utf8;
 
 -- TABLE: CONSUME_USER
@@ -87,13 +90,13 @@ CREATE TABLE sp
   id INT UNSIGNED AUTO_INCREMENT,
   name VARCHAR(128),
   description VARCHAR(255),
-  userid BIGINT UNSIGNED,
+  userid INT UNSIGNED,
   status  TINYINT,
   createtime TIMESTAMP,
   verifytime TIMESTAMP,
   CONSTRAINT sp_pk PRIMARY KEY (id),
   CONSTRAINT sp_to_user_fk_1 FOREIGN KEY (userid) REFERENCES usr(id)
-) DEFAULT CHARSET = utf8;
+) DEFAULT CHARSET = utf8;	
 
 
 -- TABLE: SPORT_TYPE
@@ -137,8 +140,8 @@ CREATE TABLE coach_cert_rel
 -- TABLE: SP_SPORT_REL
 CREATE TABLE sp_sport_rel
 (
-  spid INT,
-  sportid INT,
+  spid INT UNSIGNED,
+  sportid INT UNSIGNED,
   CONSTRAINT sp_fk_1 FOREIGN KEY (spid) REFERENCES sp(id),
   CONSTRAINT sport_fk_2 FOREIGN KEY (sportid) REFERENCES sport_type(id)
 ) DEFAULT CHARSET = utf8;
@@ -153,9 +156,9 @@ CREATE TABLE sp_sport_rel
 CREATE TABLE course
 (
   id BIGINT UNSIGNED AUTO_INCREMENT,
-  spid INT,
-  stid INT,
-  coachid INT,
+  spid INT UNSIGNED,
+  stid INT UNSIGNED,
+  coachid INT UNSIGNED,
   coursename VARCHAR(255),
   coursedetail VARCHAR(512),
   courseaddress VARCHAR(255),
@@ -256,7 +259,7 @@ CREATE TABLE notice
 CREATE TABLE notice_user
 (
   noticeid BIGINT UNSIGNED,
-  userid BIGINT UNSIGNED,
+  userid INT UNSIGNED,
   status TINYINT,
   CONSTRAINT notice_fk_1 FOREIGN KEY (noticeid) REFERENCES notice(id),
   CONSTRAINT notice_to_user_fk_2 FOREIGN KEY (userid) REFERENCES usr(id)
@@ -270,7 +273,7 @@ CREATE TABLE feedback
   title VARCHAR(256),
   content VARCHAR(1024),
   createtime TIMESTAMP,
-  userid BIGINT UNSIGNED,
+  userid INT UNSIGNED,
   reply VARCHAR(1024),
   replytime TIMESTAMP,
   status TINYINT,
