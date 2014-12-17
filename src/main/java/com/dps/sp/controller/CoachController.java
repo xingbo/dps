@@ -35,7 +35,7 @@ public class CoachController extends BaseController{
 			// TODO Auto-generated method stub
 			//PagedResult<Coach> results = coachBiz.listPagedCoachs(start, limit);
 			PagedResult<Coach> results = new PagedResult<Coach>();
-			
+		
 			Coach c = new Coach();
 			c.setId(1);
 			c.setAddress("������������");
@@ -63,7 +63,7 @@ public class CoachController extends BaseController{
 		}
 	}
  
-	//某教练的个人详细信息
+	//某教练的个人详细信息， 某个教练的完整信息，可根据该教练 关联其课程
 	@RequestMapping(value = "/coach/get", method = RequestMethod.GET)
 	public @ResponseBody
 	Map<String, Object> findCoach(@RequestParam("coachId") long coachId) {

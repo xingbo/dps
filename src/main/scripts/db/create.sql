@@ -158,7 +158,7 @@ CREATE TABLE course
   id BIGINT UNSIGNED AUTO_INCREMENT,
   spid INT UNSIGNED,
   stid INT UNSIGNED,
-  coachid INT UNSIGNED,
+  coachid INT,
   coursename VARCHAR(255),
   coursedetail VARCHAR(512),
   courseaddress VARCHAR(255),
